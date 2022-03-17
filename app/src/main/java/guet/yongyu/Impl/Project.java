@@ -1,9 +1,9 @@
 package guet.yongyu.Impl;
 
 import guet.yongyu.Utils.FileUtil;
+import guet.yongyu.Utils.PropUtil;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,9 +50,7 @@ public abstract class Project {
         return allFiles;
     }
 
-    /*
 
-     */
     public void setMainFileIndex(int index){
 
     }
@@ -98,10 +96,11 @@ public abstract class Project {
     }
 
     /**
-     * 找到文件的main类
+     * 找到文件的main类,每一种不同语言有不同的主类，通过读取配置文件实现
      * @return main类的名字
      */
-    public String resolveMain() {
-        return null;
-    }
+    public abstract String resolveMain() ;
+
+
+
 }

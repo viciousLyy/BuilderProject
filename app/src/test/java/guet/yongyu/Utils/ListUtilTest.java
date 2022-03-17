@@ -37,7 +37,7 @@ class ListUtilTest {
     @Test
     void strSplit(){
         
-        String[] strings = ListUtil.strSplit(PropUtil.getParameter("c"));
+        String[] strings = ListUtil.strSplit(PropUtil.getParameterOfCompiler("c"));
         for(String str:strings)
             System.out.println(str);
     }

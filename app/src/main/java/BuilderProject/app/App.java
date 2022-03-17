@@ -11,6 +11,7 @@ import static BuilderProject.app.MessageUtils.getMessage;
 
 import guet.yongyu.Builder.Builder;
 import guet.yongyu.Builder.MixedBuilder;
+import guet.yongyu.Factory.BuilderFactory;
 import guet.yongyu.Impl.Project;
 import guet.yongyu.Specify.CProject;
 import guet.yongyu.Specify.GccCompiler;
@@ -18,7 +19,17 @@ import org.apache.commons.text.WordUtils;
 
 public class App {
     public static void main(String[] args) {
-        Project project = new CProject("E:\\ext","c");
-        project.getOutputDir();
+        Builder builder = null;
+        try {
+            builder = BuilderFactory.getInstance().getProjectBuilder("c");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        Project project = new CProject("E:\\codeblockProject\\BuilderTest","c");
+        builder.run(project);
     }
 }

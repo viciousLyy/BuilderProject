@@ -19,8 +19,10 @@ public class GccInterpreter extends Interpreter {
         cmd.add("cmd");
         cmd.add("/k");
         cmd.add("start");
+//        cmd.add(InterpreteCommand.libPath);
         cmd.add(InterpreteCommand.main);
         this.setCommandWithWindow(cmd);
+
     }
 
     @Override

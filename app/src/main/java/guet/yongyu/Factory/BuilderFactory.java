@@ -34,7 +34,7 @@ public class BuilderFactory {
      */
     public Builder getProjectBuilder(String srcExt) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Builder builder = null;
-        String value = PropUtil.getParameter(srcExt);
+        String value = PropUtil.getParameterOfCompiler(srcExt);
         if(value == null){
             System.out.println("找不到该参数对应的构建器");
             return null;

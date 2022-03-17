@@ -8,7 +8,7 @@ class PropUtilTest {
 
     @Test
     void getParameter() {
-        String value = PropUtil.getParameter("c");
+        String value = PropUtil.getParameterOfCompiler("c");
         System.out.println(value);
     }
 }

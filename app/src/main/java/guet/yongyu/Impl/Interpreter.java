@@ -52,8 +52,10 @@ public abstract class Interpreter {
      * @throws Exception 项目异常
      */
     public void executeWithWindow(Project project, String... args) throws Exception {
+        System.out.println("----------exe begin--------------");
         List<String> cmd = resetCmdLine(cmdLineWithWindow);
         populatePlaceholders(cmd,project);
+        System.out.println("----------exe ing--------------");
         cmd.addAll(Arrays.asList(args));
         Process p;
         try {

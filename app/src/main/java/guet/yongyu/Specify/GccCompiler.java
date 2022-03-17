@@ -22,6 +22,8 @@ public class GccCompiler extends Compiler {
         cmd.add("-o");
         cmd.add(CompileCommand.targetFile);
         this.setCommand(cmd);
+
+
     }
     @Override
     protected void populateExtraPlaceHolder(List<String> extraPlaceHolder, List<String> cmd, Project project) {

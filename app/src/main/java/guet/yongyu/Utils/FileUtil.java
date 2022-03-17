@@ -1,6 +1,6 @@
 package guet.yongyu.Utils;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,5 +36,57 @@ public class FileUtil {
         return result;
     }
 
+    /**
+     * 读取文件中的所有内容
+     * @param file 目标文件
+     * @return 以列表的形式保存的文件内容
+     */
+    public static List<String> getContents(File file){
+        String charSet = getCharSet(file);
+        try(
+                InputStream ins =new FileInputStream(file);
+                InputStreamReader isr = new InputStreamReader(ins,charSet);
+                BufferedReader br = new BufferedReader(isr);
+
+        ) {
+            List<String> contents = null;
+            String s = br.readLine();
+            while(s!=null){
+                contents.add(s);
+                s = br.readLine();
+            }
+            return contents;
+        } catch (FileNotFoundException e) {
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 读取文件的编码方式
+     * @param file 目标文件
+     * @return 编码
+     */
+    public static String getCharSet(File file){
+        byte[] head = new byte[3];
+        try(
+                FileInputStream stream = new FileInputStream(file);
+        ) {
+            stream.read(head);
+            String code = "gb2312";
+            if (head[0] == -1 && head[1] == -2 )
+                code = "UTF-16";
+            else if (head[0] == -2 && head[1] == -1 )
+                code = "Unicode";
+            else if(head[0]==-17 && head[1]==-69 && head[2] ==-65)
+                code = "UTF-8";
+            return code;
+        } catch (FileNotFoundException e) {
+            return "gb2312";
+        } catch (IOException e) {
+            return "gb2312";
+        }
+    }
 
 }

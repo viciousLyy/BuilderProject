@@ -33,7 +33,7 @@ public class TextFile  {
                 BufferedReader br = new BufferedReader(isr);
 
         ) {
-            List<String> contents = new ArrayList<>();
+            List<String> contents = null;         //不能new一个对象出来，因为new出来后该变量就不会为空了
             String s = br.readLine();
             while(s!=null){
                 contents.add(s);

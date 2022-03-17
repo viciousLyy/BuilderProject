@@ -18,6 +18,5 @@ class BuilderFactoryTest {
         Builder builder = BuilderFactory.getInstance().getProjectBuilder("c");
         Project project = new CProject("E:\\codeblockProject\\BuilderTest","c");
         builder.run(project);
-
     }
 }
