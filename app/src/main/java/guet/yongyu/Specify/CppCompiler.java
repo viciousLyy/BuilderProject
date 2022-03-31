@@ -7,9 +7,9 @@ import guet.yongyu.Utils.CompileCommand;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GccCompiler extends Compiler {
+public class CppCompiler extends Compiler {
 
-    public GccCompiler(){
+    public CppCompiler(){
         List<String>exts=new ArrayList<>();
         exts.add("c");
         exts.add("cpp");
@@ -17,7 +17,9 @@ public class GccCompiler extends Compiler {
         this.setTargetFileExt("exe");
         this.setCompilerName("GCC编译器");
         List<String> cmd=new ArrayList<>();
-        cmd.add("gcc");
+        cmd.add("g++");
+        cmd.add("-I");
+        cmd.add("../include");
         cmd.add(CompileCommand.sourceFiles);
         cmd.add("-o");
         cmd.add(CompileCommand.targetFile);

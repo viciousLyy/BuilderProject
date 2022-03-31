@@ -15,11 +15,11 @@ public abstract class Project {
 
     public Project(){}
 
-    public static String getSrcExt() {
+    public String getSrcExt() {
         return srcExt;
     }
 
-    public static void setSrcExt(String srcExt) {
+    public void setSrcExt(String srcExt) {
         Project.srcExt = srcExt;
     }
 
@@ -67,15 +67,35 @@ public abstract class Project {
     }
 
     /**
-     * 得到当前项目下所有以某一个后缀结尾的文件（比如c,cpp）
+     * 得到当前项目下所有后缀结尾的文件（比如c,cpp）
      * @return  一个文件列表（以某一后缀结尾）
      */
     public List<File> getSrcFiles(){
+        List<File> result = new ArrayList<>();
         List<String> srcExtSingle = new ArrayList<>();
         srcExtSingle.add(getSrcExt());
         File file = new File(getPath());
-        FileUtil.findFiles(allFiles,file,srcExtSingle);
-        return allFiles;
+        FileUtil.findFiles(result,file,srcExtSingle);
+        if(result.isEmpty()){
+            FileUtil.write2File(getOutputDir().getAbsolutePath()+File.separator
+            +"error.txt","无法读取到任何文件");
+            return null;
+        }
+        return result;
+    }
+
+    /**
+     * 得到当前项目下所有以ext后缀结尾的文件（比如jar）
+     * @param ext 特定后缀
+     * @return  以特定后缀结尾的文件集合
+     */
+    public List<File> getExtFiles(String ext){
+        List<File> result = new ArrayList<>();
+        List<String> srcExtSingle = new ArrayList<>();
+        srcExtSingle.add(ext);
+        File file = new File(getPath());
+        FileUtil.findFiles(result,file,srcExtSingle);
+        return result;
     }
 
     /**
@@ -100,7 +120,4 @@ public abstract class Project {
      * @return main类的名字
      */
     public abstract String resolveMain() ;
-
-
-
 }

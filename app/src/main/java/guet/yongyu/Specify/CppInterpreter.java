@@ -7,9 +7,9 @@ import guet.yongyu.Utils.InterpreteCommand;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GccInterpreter extends Interpreter {
+public class CppInterpreter extends Interpreter {
 
-    public GccInterpreter(){
+    public CppInterpreter(){
         List<String> ext = new ArrayList<>();
         ext.add("exe");
         this.setSrcFileExt(ext);

@@ -52,10 +52,10 @@ public abstract class Interpreter {
      * @throws Exception 项目异常
      */
     public void executeWithWindow(Project project, String... args) throws Exception {
-        System.out.println("----------exe begin--------------");
+        File workDir = project.getOutputDir();
+        processBuilder.directory(workDir);
         List<String> cmd = resetCmdLine(cmdLineWithWindow);
         populatePlaceholders(cmd,project);
-        System.out.println("----------exe ing--------------");
         cmd.addAll(Arrays.asList(args));
         Process p;
         try {
@@ -90,6 +90,8 @@ public abstract class Interpreter {
                 project.getOutputDir().getAbsolutePath());
         ListUtil.replaceFirst(cmd,InterpreteCommand.main,
                 project.resolveMain());
+
+        System.out.println("==============common is"+cmd);
         List<String>extraPlaceHolders= Compiler.getExtraPlaceHolder(cmd);
         if(extraPlaceHolders.size() >0){
             populateExtraPlaceHolder(extraPlaceHolders,cmd,project);
@@ -111,13 +113,12 @@ public abstract class Interpreter {
      * @throws Exception 项目异常
      * @return 语法错误
      */
-    public List<String> checkSyntaxErr(Project project) throws Exception, Exception {
+    public List<String> checkSyntaxErr(Project project) throws Exception {
         processBuilder.redirectInput(ProcessBuilder.Redirect.PIPE);
         processBuilder.redirectOutput(ProcessBuilder.Redirect.PIPE);
         List<String> cmd = resetCmdLine(cmdLineWithoutWindow);
         populatePlaceholders(cmd,project);
         String targetPath = project.getOutputDir().getAbsolutePath();
-
         TextFile errFile = new TextFile(targetPath + File.separator + "err.txt");
         processBuilder.redirectError(errFile.getFile());
         Process p;

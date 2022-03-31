@@ -1,6 +1,10 @@
 package guet.yongyu.Utils;
 
+import info.monitorenter.cpdetector.io.*;
+
 import java.io.*;
+import java.net.MalformedURLException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,13 +47,14 @@ public class FileUtil {
      */
     public static List<String> getContents(File file){
         String charSet = getCharSet(file);
+        System.out.println(charSet);
         try(
                 InputStream ins =new FileInputStream(file);
                 InputStreamReader isr = new InputStreamReader(ins,charSet);
                 BufferedReader br = new BufferedReader(isr);
 
         ) {
-            List<String> contents = null;
+            List<String> contents = new ArrayList<>();
             String s = br.readLine();
             while(s!=null){
                 contents.add(s);
@@ -68,7 +73,7 @@ public class FileUtil {
      * @param file 目标文件
      * @return 编码
      */
-    public static String getCharSet(File file){
+    public static String getChar(File file){
         byte[] head = new byte[3];
         try(
                 FileInputStream stream = new FileInputStream(file);
@@ -86,6 +91,49 @@ public class FileUtil {
             return "gb2312";
         } catch (IOException e) {
             return "gb2312";
+        }
+    }
+
+    /**
+     * 利用cpdetector获取文件的编码类型
+     * @param file  源文件
+     * @return  源文件的编码类型
+     */
+    public static String getCharSet(File file){
+        CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();
+//        detector.add(new ParsingDetector(false));
+        detector.add(JChardetFacade.getInstance());
+        detector.add(ASCIIDetector.getInstance());
+        detector.add(UnicodeDetector.getInstance());
+
+        Charset charset = null;
+        try{
+            charset = detector.detectCodepage(file.toURI().toURL());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(charset != null)
+            return charset.name();
+        else
+            return null;
+    }
+
+    /**
+     * 将字符串内容写入到文件中去
+     * @param path 所要写入文件的路径
+     * @param contents 所要写入的内容
+     */
+    public static void write2File(String path,String contents){
+        File file = new File(path);
+        try{
+            FileWriter fw = new FileWriter(path);
+            fw.write(contents);
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

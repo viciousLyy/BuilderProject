@@ -2,6 +2,8 @@ package guet.yongyu.Factory;
 
 import guet.yongyu.Builder.Builder;
 import guet.yongyu.Builder.CompileBuilder;
+import guet.yongyu.Builder.InterpreteBuilder;
+import guet.yongyu.Builder.MixedBuilder;
 import guet.yongyu.Impl.Interpreter;
 import guet.yongyu.Impl.Compiler;
 import guet.yongyu.Utils.ListUtil;
@@ -51,9 +53,14 @@ public class BuilderFactory {
                 break;
 
             case "MixedBuilder":
+                Compiler compiler2 = (Compiler) Class.forName(pathOfSpecify+builders[1]).newInstance();
+                Interpreter interpreter2 = (Interpreter) Class.forName(pathOfSpecify+builders[3]).newInstance();
+                builder = new MixedBuilder(compiler2,interpreter2);
                 break;
 
             case "InterpreteBuilder":
+                Interpreter interpreter3 = (Interpreter) Class.forName(pathOfSpecify+builders[1]).newInstance();
+                builder = new InterpreteBuilder(interpreter3);
                 break;
 
             default:

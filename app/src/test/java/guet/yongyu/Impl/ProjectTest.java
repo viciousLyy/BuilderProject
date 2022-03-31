@@ -1,6 +1,9 @@
 package guet.yongyu.Impl;
 
 import guet.yongyu.Specify.CProject;
+import guet.yongyu.Specify.CppProject;
+import guet.yongyu.Specify.JavaProject;
+import guet.yongyu.Specify.PythonProject;
 import guet.yongyu.Utils.FileUtil;
 import guet.yongyu.Utils.TextFile;
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProjectTest {
 
 
+    Project Cppproject = new CppProject("","");
+    Project Javaproject = new JavaProject("","");
+    Project Pythonproject = new PythonProject("","");
 
     @Test
     void getOutputDir() {
@@ -50,6 +56,12 @@ class ProjectTest {
     @Test
     void resolveMain(){
 
+    }
+
+    @Test
+    void getMainFiles(){
+        JavaProject Javaproject = new JavaProject("E:\\codeblockProject\\CppTest","java");
+        Javaproject.getSrcFiles();
     }
 }
 

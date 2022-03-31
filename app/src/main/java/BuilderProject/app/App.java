@@ -13,8 +13,8 @@ import guet.yongyu.Builder.Builder;
 import guet.yongyu.Builder.MixedBuilder;
 import guet.yongyu.Factory.BuilderFactory;
 import guet.yongyu.Impl.Project;
-import guet.yongyu.Specify.CProject;
-import guet.yongyu.Specify.GccCompiler;
+import guet.yongyu.Specify.*;
+import guet.yongyu.Utils.TextFile;
 import org.apache.commons.text.WordUtils;
 
 public class App {
@@ -22,6 +22,7 @@ public class App {
         Builder builder = null;
         try {
             builder = BuilderFactory.getInstance().getProjectBuilder("c");
+            System.out.println(builder.getClass());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
@@ -30,6 +31,7 @@ public class App {
             e.printStackTrace();
         }
         Project project = new CProject("E:\\codeblockProject\\BuilderTest","c");
+        TextFile input = new TextFile("E:\\IdealProject\\CTest\\input.txt");
         builder.run(project);
     }
 }

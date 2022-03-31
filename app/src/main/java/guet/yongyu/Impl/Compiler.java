@@ -135,9 +135,8 @@ public abstract class Compiler {
      * @param project 当前要编译的项目
      */
     protected void populatePlaceHolder(List<String> cmd, Project project){
-
         ListUtil.replaceFirst(cmd, CompileCommand.sourceFiles,
-                FileUtil.getPathsOfFiles(project.getSrcFiles()).get(0));
+                ListUtil.list2Array(FileUtil.getPathsOfFiles(project.getSrcFiles())));
         ListUtil.replaceFirst(cmd,CompileCommand.targetPath,
                 project.getOutputDir().getAbsolutePath());
         String targetFilePath=project.getOutputDir().getAbsolutePath()
@@ -149,6 +148,8 @@ public abstract class Compiler {
         if(extraPlaceHolder.size()>0){
             populateExtraPlaceHolder(extraPlaceHolder,cmd,project);
         }
+
+        System.out.println(cmd);
     }
 
 
@@ -170,7 +171,8 @@ public abstract class Compiler {
         List<String>result=new ArrayList<>();
         String reg="\\{.+}";
         for(String s:cmd){
-            if(s.matches(reg)){
+            System.out.println("getExtraPlaceHolder->s:"+s);
+            if (s.matches(reg)) {
                 result.add(s);
             }
         }

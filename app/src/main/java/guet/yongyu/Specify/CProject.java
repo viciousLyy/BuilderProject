@@ -19,29 +19,20 @@ public class CProject extends Project {
     }
 
     /**
-     * c语言的获取main类
+     * c语言的获取生成的可运行文件
      * @return main类的文件名
      */
     @Override
     public String resolveMain() {
-        String mainName = null;
-        allFiles = getMainFiles(getOutputDir().getAbsolutePath());
-//        String regx = PropUtil.getParameterOfProject(ext);
-//        for(File file:allFiles){
-//            List<String> contents = FileUtil.getContents(file);
-//            for(String content:contents){
-//                if(content.matches(regx))
-//                {
-//                    mainName = file.getName();
-//                    break;
-//                }
-//            }
-//        }
-
+        String[] strings = {};
+        List<File> result = getMainFiles(getOutputDir().getAbsolutePath());
         String targetfile = getProjectName()+".exe";
-        for(File file:allFiles){
+        for(File file:result){
             if(file.getName().matches(targetfile))
+            {
+
                 return file.getAbsolutePath();
+            }
         }
         return null;
     }

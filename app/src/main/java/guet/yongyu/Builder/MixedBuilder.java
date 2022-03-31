@@ -23,11 +23,10 @@ public class MixedBuilder extends Builder{
     public void run(Project project)  {
         try {
             List<String> res=compiler.compile(project);
-
+            interpreter.executeWithWindow(project);
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        interpreter.interprete(project);
     }
 
     /*
