@@ -22,7 +22,9 @@ public class CppInterpreter extends Interpreter {
 //        cmd.add(InterpreteCommand.libPath);
         cmd.add(InterpreteCommand.main);
         this.setCommandWithWindow(cmd);
-
+        cmd.clear();
+        cmd.add(InterpreteCommand.main);
+        this.setCommandWithoutWindow(cmd);
     }
 
     @Override

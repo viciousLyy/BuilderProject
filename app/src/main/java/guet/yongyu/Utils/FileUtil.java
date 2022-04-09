@@ -33,6 +33,9 @@ public class FileUtil {
      * @return 对应路径
      */
     public static List<String> getPathsOfFiles(List<File> srcFiles) {
+        if( srcFiles == null || srcFiles.isEmpty() ){
+            return null;
+        }
         List<String> result = new ArrayList<>();
         for(File f:srcFiles){
             result.add(f.getAbsolutePath());
@@ -47,7 +50,6 @@ public class FileUtil {
      */
     public static List<String> getContents(File file){
         String charSet = getCharSet(file);
-        System.out.println(charSet);
         try(
                 InputStream ins =new FileInputStream(file);
                 InputStreamReader isr = new InputStreamReader(ins,charSet);
@@ -56,6 +58,9 @@ public class FileUtil {
         ) {
             List<String> contents = new ArrayList<>();
             String s = br.readLine();
+            if(s == null){
+                return null;
+            }
             while(s!=null){
                 contents.add(s);
                 s = br.readLine();
@@ -135,6 +140,16 @@ public class FileUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 返回文件名字，鸡肋
+     * @param name
+     * @return
+     */
+    public static String getStringName(){
+
+        return null;
     }
 
 }

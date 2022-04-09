@@ -57,6 +57,7 @@ public abstract class Interpreter {
         List<String> cmd = resetCmdLine(cmdLineWithWindow);
         populatePlaceholders(cmd,project);
         cmd.addAll(Arrays.asList(args));
+        System.out.println("============ ==common is"+cmd);
         Process p;
         try {
             p = processBuilder.start();
@@ -90,8 +91,6 @@ public abstract class Interpreter {
                 project.getOutputDir().getAbsolutePath());
         ListUtil.replaceFirst(cmd,InterpreteCommand.main,
                 project.resolveMain());
-
-        System.out.println("==============common is"+cmd);
         List<String>extraPlaceHolders= Compiler.getExtraPlaceHolder(cmd);
         if(extraPlaceHolders.size() >0){
             populateExtraPlaceHolder(extraPlaceHolders,cmd,project);
@@ -199,7 +198,13 @@ public abstract class Interpreter {
      * @throws Exception 项目异常
      * @return 程序输出内容存放的文件
      */
-    public TextFile executeWithoutWindow(Project project, TextFile input, String... args) throws Exception, Exception {
+    public TextFile executeWithoutWindow(Project project, TextFile input, String... args) throws Exception {
+        /**
+         * 设置工作目录，否则对于java文件来说，容易出错
+         */
+        File workDir = project.getOutputDir();
+        processBuilder.directory(workDir);
+
         processBuilder.redirectInput(input.getFile());
         File targetPath = project.getOutputDir();
         TextFile output = new TextFile(targetPath.getPath() + File.separator + "output.txt");

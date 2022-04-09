@@ -19,6 +19,7 @@ public class BuilderFactory {
 
     /**
      * 返回工厂实例
+     * 使用同步锁 synchronized (Singleton.class) 防止多线程同时进入造成 instance 被多次实例化。
      * @return
      */
     public static BuilderFactory getInstance(){
@@ -34,33 +35,75 @@ public class BuilderFactory {
      * @param srcExt 后缀参数
      * @return  对应的构建器
      */
-    public Builder getProjectBuilder(String srcExt) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public Builder getProjectBuilder(String srcExt) {
         Builder builder = null;
+        /**
+         * 根据后缀名读取到配置文件中的相应参数
+         */
         String value = PropUtil.getParameterOfCompiler(srcExt);
         if(value == null){
             System.out.println("找不到该参数对应的构建器");
             return null;
         }
+        /**
+         * 将读取到的参数进行字符串分割
+         */
+        String[] builders = ListUtil.strSplit(value);
 
-        String[] builders = ListUtil.strSplit(value);           //读取配置文件
+        /**
+         * 各个实现类的具体包名
+         */
+        String pathOfSpecify = "guet.yongyu.Specify.";
 
-        String pathOfSpecify = "guet.yongyu.Specify.";        //各个实现类的具体包名
+        /**
+         * 根据包名参数最后的一个值进行判断，该后缀名对应的构建器类型
+         */
         switch(builders[builders.length-1]){
             case "CompileBuilder":
-                Compiler compiler = (Compiler) Class.forName(pathOfSpecify+builders[1]).newInstance();
-                Interpreter interpreter = (Interpreter) Class.forName(pathOfSpecify+builders[3]).newInstance();
-                builder  = new CompileBuilder(compiler,interpreter);
+                Compiler compiler = null;
+                Interpreter interpreter = null;
+                try {
+                    compiler = (Compiler) Class.forName(pathOfSpecify+builders[1]).newInstance();
+                    interpreter = (Interpreter) Class.forName(pathOfSpecify+builders[3]).newInstance();
+                    builder  = new CompileBuilder(compiler,interpreter);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
                 break;
 
             case "MixedBuilder":
-                Compiler compiler2 = (Compiler) Class.forName(pathOfSpecify+builders[1]).newInstance();
-                Interpreter interpreter2 = (Interpreter) Class.forName(pathOfSpecify+builders[3]).newInstance();
-                builder = new MixedBuilder(compiler2,interpreter2);
+                Compiler compiler2 = null;
+                Interpreter interpreter2 = null;
+                try {
+                    compiler2 = (Compiler) Class.forName(pathOfSpecify+builders[1]).newInstance();
+                    interpreter2 = (Interpreter) Class.forName(pathOfSpecify+builders[3]).newInstance();
+                    builder = new MixedBuilder(compiler2,interpreter2);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
                 break;
 
             case "InterpreteBuilder":
-                Interpreter interpreter3 = (Interpreter) Class.forName(pathOfSpecify+builders[1]).newInstance();
-                builder = new InterpreteBuilder(interpreter3);
+                Interpreter interpreter3 = null;
+                try {
+                    interpreter3 = (Interpreter) Class.forName(pathOfSpecify+builders[1]).newInstance();
+                    builder = new InterpreteBuilder(interpreter3);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
                 break;
 
             default:

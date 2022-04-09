@@ -78,7 +78,7 @@ public abstract class Project {
         FileUtil.findFiles(result,file,srcExtSingle);
         if(result.isEmpty()){
             FileUtil.write2File(getOutputDir().getAbsolutePath()+File.separator
-            +"error.txt","无法读取到任何文件");
+            +"err.txt","无法读取到任何文件");
             return null;
         }
         return result;
@@ -120,4 +120,77 @@ public abstract class Project {
      * @return main类的名字
      */
     public abstract String resolveMain() ;
+
+    /**
+     * 读取编译器过后生成的error文件内容，如果没有内容，则返回null
+     * @return error文件中的内容
+     */
+    public List<String> getErrorTxt(){
+        File file = new File(getOutputDir().getAbsolutePath()+
+                File.separator+"error.txt");
+        if(!file.exists())
+        {
+            return null;
+        }
+        if(FileUtil.getContents(file) != null){
+            List<String> result = FileUtil.getContents(file);
+            return result;
+        }
+
+        return null;
+    }
+
+    /**
+     * 读取解释器生成的err文件内容
+     * @return err.txt内容
+     */
+    public List<String> getErrTxt(){
+        File file = new File(getOutputDir().getAbsolutePath()+
+                File.separator+"err.txt");
+        if(!file.exists())
+        {
+            return null;
+        }
+        if(FileUtil.getContents(file) != null){
+            List<String> result = FileUtil.getContents(file);
+            return result;
+        }
+        return null;
+    }
+
+    /**
+     * 得到生成的主函数入口，又可能有多个
+     * @return
+     */
+    public List<String> getMain(){
+        List<File> result= getSrcFiles();
+        List<String> files = new ArrayList<>();
+        List<String> contents = null;
+        String mainPackage = "";
+        String regx = ".*public static void main\\(String\\[\\] args\\).*";
+        for(File file:result){
+            contents = FileUtil.getContents(file);
+            for(String str:contents){
+                if(str.matches("\\s*package\\s.*")){
+                    mainPackage = str.split("\\s|;")[1];
+                }
+                if(str.matches(regx))
+                {
+                    System.out.println(file.getName()+"package is "+mainPackage);
+                    if(mainPackage != "")
+                    {
+                        files.add(mainPackage+"."+file.getName().replaceFirst(".java",""));
+                        mainPackage  = "";
+                    }
+                    else{
+                        files.add(file.getName().replaceFirst(".java",""));
+                    }
+                    break;
+                }
+            }
+            mainPackage  = "";
+        }
+        return files;
+    }
+
 }

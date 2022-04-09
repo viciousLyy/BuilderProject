@@ -102,12 +102,29 @@ public abstract class Compiler {
      * @throws CompilerException 存在语法错误时或编译器不能正常工作时
      */
     public final List<String> compile(Project project) throws CompilerException {
+        /**
+         *将工作目录重定向到指定的文件中
+         */
         File outputDir=project.getOutputDir();
         processBuilder.directory(outputDir);
+
+        /**
+         * 重定向错误输出流到指定的文件中
+         */
         TextFile errFile = createErrTextFile(outputDir);
         processBuilder.redirectError(errFile.getFile());
+
+        /**
+         * 填充cmd命令行
+         */
         List<String> cmd = resetCmdLine();
         populatePlaceHolder(cmd,project);
+
+        /**
+         * 使用processBuilder执行cmd命令
+         * processBuilder用于创建操作系统进程，提供了一种启动和管理进程的方法
+         * waitFor用于等待当前进程完成。
+         */
         Process p = null;
         try {
             p = this.processBuilder.start();
@@ -126,7 +143,6 @@ public abstract class Compiler {
             throw new CompilerException(sb.toString());
         }
         return getCompileResultFilePaths(outputDir);
-
     }
 
     /**
@@ -148,8 +164,6 @@ public abstract class Compiler {
         if(extraPlaceHolder.size()>0){
             populateExtraPlaceHolder(extraPlaceHolder,cmd,project);
         }
-
-        System.out.println(cmd);
     }
 
 
@@ -163,15 +177,14 @@ public abstract class Compiler {
     protected abstract void populateExtraPlaceHolder(List<String> extraPlaceHolder, List<String> cmd, Project project);
 
     /**
-     * 获取命令行中除CompileCommand定义之外的占位符
+     * 获取命令行中除CompileCommand定义之外的占位符，比如{targetFile}，{jarFile};之类的占位符
      * @param cmd 命令行
      * @return 额外的占位符
      */
     public static List<String> getExtraPlaceHolder(List<String> cmd) {
         List<String>result=new ArrayList<>();
-        String reg="\\{.+}";
+        String reg="\\{.+}|\\{.+};";
         for(String s:cmd){
-            System.out.println("getExtraPlaceHolder->s:"+s);
             if (s.matches(reg)) {
                 result.add(s);
             }

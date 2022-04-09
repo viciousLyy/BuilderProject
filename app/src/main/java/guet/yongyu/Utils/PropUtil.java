@@ -38,7 +38,7 @@ public class PropUtil {
         FileInputStream in = null;
         try{
             //路径问题
-            in = new FileInputStream("src/main/resources/project.properties");
+            in = new FileInputStream("app/src/main/resources/project.properties");
             properties.load(in);
             value = properties.getProperty(key);
         } catch (IOException e) {

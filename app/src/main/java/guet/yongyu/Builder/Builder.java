@@ -8,10 +8,10 @@ public abstract class Builder {
     /*
     无输入的项目运行
      */
-    public abstract void run(Project project);
+    public abstract void run(Project project,String ... args);
 
     /*
     有输入的项目运行
      */
-    public abstract TextFile run(Project project, TextFile srcFile);
+    public abstract TextFile run(Project project, TextFile srcFile,String ... args);
 }

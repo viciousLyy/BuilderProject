@@ -21,6 +21,8 @@ public class ListUtil {
      * @param source 特定字符
      */
     public static void replaceFirst(List<String> cmd, String target, String... source) {
+        if(source == null )
+            return ;
         for(int i=0;i<cmd.size();i++){
             if(cmd.get(i).equals(target))
             {
@@ -62,6 +64,8 @@ public class ListUtil {
      * @return 转换之后的数组
       */
     public static String[] list2Array(List<String> list){
+        if(list == null || list.isEmpty())
+            return null;
         return list.toArray(new String[list.size()]);
     }
 }

@@ -6,6 +6,7 @@ import guet.yongyu.Specify.JavaProject;
 import guet.yongyu.Specify.PythonProject;
 import guet.yongyu.Utils.FileUtil;
 import guet.yongyu.Utils.TextFile;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -62,6 +63,13 @@ class ProjectTest {
     void getMainFiles(){
         JavaProject Javaproject = new JavaProject("E:\\codeblockProject\\CppTest","java");
         Javaproject.getSrcFiles();
+    }
+
+    @Test
+    void getErrTxt(){
+        Project p = new JavaProject("E:\\BuilderProject\\app\\src\\main\\resources\\testProject\\CharSetgetJava",
+                "java");
+        System.out.println(p.getErrTxt());
     }
 }
 

@@ -19,10 +19,10 @@ public class CompileBuilder extends Builder{
     }
 
     @Override
-    public void run(Project project) {
+    public void run(Project project,String ... args) {
         try {
             List<String> res =compiler.compile(project);
-            interpreter.executeWithWindow(project,"");
+            interpreter.executeWithWindow(project,args);
         } catch (CompilerException e) {
             System.out.println(e.getMessage());
         } catch (Exception e) {
@@ -31,7 +31,16 @@ public class CompileBuilder extends Builder{
     }
 
     @Override
-    public TextFile run(Project project, TextFile textFile){
+    public TextFile run(Project project, TextFile textFile,String ... args){
+        try {
+            List<String> res = compiler.compile(project);
+            TextFile result = interpreter.executeWithoutWindow(project,textFile,args);
+            return result;
+        } catch (CompilerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

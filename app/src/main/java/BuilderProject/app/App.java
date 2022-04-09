@@ -12,26 +12,308 @@ import static BuilderProject.app.MessageUtils.getMessage;
 import guet.yongyu.Builder.Builder;
 import guet.yongyu.Builder.MixedBuilder;
 import guet.yongyu.Factory.BuilderFactory;
+import guet.yongyu.Factory.ProjectFactory;
 import guet.yongyu.Impl.Project;
 import guet.yongyu.Specify.*;
+import guet.yongyu.Utils.FileUtil;
+import guet.yongyu.Utils.ListUtil;
 import guet.yongyu.Utils.TextFile;
 import org.apache.commons.text.WordUtils;
+import org.omg.CosNaming.BindingIterator;
 
-public class App {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+
+public class App extends JFrame{
     public static void main(String[] args) {
-        Builder builder = null;
-        try {
-            builder = BuilderFactory.getInstance().getProjectBuilder("c");
-            System.out.println(builder.getClass());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        Project project = new CProject("E:\\codeblockProject\\BuilderTest","c");
-        TextFile input = new TextFile("E:\\IdealProject\\CTest\\input.txt");
-        builder.run(project);
+//        Builder builder = BuilderFactory.getInstance().getProjectBuilder("java");
+//        Project project = ProjectFactory.getInstance().getProject(
+//                "E:\\codeblockProject\\TwoMain",
+//                "java");
+//
+////        builder.run(project);
+//        TextFile input = new TextFile("E:\\codeblockProject\\TwoMain\\input.txt");
+//        builder.run(project);
+        App app = new App();
+    }
+
+    public App(){
+        init();
+        this.setSize(800,800);
+        this.setVisible(true);
+        this.setDefaultCloseOperation(
+                JFrame.EXIT_ON_CLOSE
+        );
+    }
+
+    public void init(){
+        JButton jb1 = new JButton("选择文件");
+        JButton jb2 = new JButton("带窗口运行此文件");
+        JButton jb3 = new JButton("不带窗口运行此文件");
+        jb1.setFont(new Font("Dialog",1,20));
+        jb2.setFont(new Font("Dialog",1,20));
+        jb3.setFont(new Font("Dialog",1,20));
+
+        JTextField jTextField = new JTextField();
+        jTextField.setFont(new Font("Dialog",1,15));
+
+        String[] values1 = new String[]{"--请选择--","c","java","python","cpp"};
+
+        JComboBox jComboBox1 = new JComboBox(values1);
+        JComboBox jComboBox2 = new JComboBox(new String[]{"---","dd","sdfsad"});
+        jComboBox1.setFont(new Font("Dialog",1,20));
+        jComboBox2.setFont(new Font("Dialog",1,20));
+
+        JTextArea textArea = new JTextArea();
+        textArea.setFont(new Font("Dialog",1,20));
+        textArea.setLineWrap(true);
+
+        JLabel jLabel = new JLabel("      ");
+        JLabel jLabel2 = new JLabel("      ");
+        JLabel jLabel3 = new JLabel("结果");
+        jLabel3.setFont(new Font("Dialog",1,40));
+
+        GridBagLayout layout = new GridBagLayout();
+        this.setLayout(layout);
+        this.add(jb1);
+        this.add(jLabel2);
+        this.add(jTextField);
+        this.add(jLabel2);
+        this.add(jComboBox1);
+
+        this.add(jb2);
+        this.add(jb3);
+        this.add(jLabel2);
+        this.add(jComboBox2);
+        this.add(jLabel3);
+        this.add(textArea);
+
+
+        /**
+         * 用来控制添加进的组件显示位置
+         */
+        GridBagConstraints s = new GridBagConstraints();
+
+        /**
+         * 填充整个区域
+         */
+        s.fill = GridBagConstraints.BOTH;
+
+        /**
+         * 设置水平所占用的格子数，如果为0，就说明该组件是最后一个
+         */
+        s.gridwidth = 1;
+
+        /**
+         * 设置组件水平的拉伸幅度，为0就说明不拉伸，
+         * 不为0就随着窗口的增大进行拉伸
+         */
+        s.weightx = 0;
+
+        /**
+         * 同理，为垂直方向
+         */
+        s.weighty = 0.2;
+        layout.setConstraints(jb1,s);
+
+        /**
+         * 文件来源输入框布局
+         */
+        s.gridwidth = 4;
+        s.weightx = 1;
+        s.weighty = 0.2;
+        layout.setConstraints(jTextField,s);
+
+
+        /**
+         * 后缀名下拉框布局
+         */
+        s.gridwidth = 0;
+        s.weightx = 0;
+        s.weighty = 0.2;
+        layout.setConstraints(jComboBox1,s);
+
+        /**
+         * 填充组件间的间隔一个元素
+         */
+        s.gridwidth = 1;
+        s.weightx = 0;
+        s.weighty = 0.2;
+        layout.setConstraints(jLabel2,s);
+
+        /**
+         * 填充最后一个元素
+         */
+        s.gridwidth = 0;
+        s.weightx = 0;
+        s.weighty = 0.2;
+        layout.setConstraints(jLabel,s);
+
+        /**
+         * 有窗口运行按钮布局
+         */
+        s.gridwidth = 1;
+        s.weighty = 0;
+        s.weightx = 0.2;
+        layout.setConstraints(jb2,s);
+
+        /**
+         * 无窗口运行按钮布局
+         */
+        s.gridwidth = 1;
+        s.weightx = 0;
+        s.weighty = 0.2;
+        layout.setConstraints(jb3,s);
+
+        /**
+         * 主函数下拉框选择
+         */
+        s.gridwidth = 0;
+        s.weighty = 0;
+        s.weightx = 0.2;
+        layout.setConstraints(jComboBox2,s);
+
+        /**
+         * 显示文本区域布局
+         */
+        s.gridwidth = 8;
+        s.weightx = 6;
+        s.weighty = 4;
+        layout.setConstraints(textArea,s);
+
+        /**
+         * ==================================================================
+         */
+        /**
+         * 项目的路径
+         */
+        final String[] path = new String[1];
+
+        /**
+         * 项目的后缀名
+         */
+        final String[] ext = new String[1];
+
+
+
+        JFileChooser chooser = new JFileChooser();
+        /**
+         * 打开可以选择文件和文件夹模式
+         */
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+        /**
+         * 记住当前容器
+         */
+        JFrame that = this;
+
+        /**
+         * 为按钮1添加监听：在textfiel中显示路径，同时记住选择的项目路径
+         */
+        jb1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                int returnVal = chooser.showOpenDialog(that);
+                File file = chooser.getCurrentDirectory();
+                if(returnVal == JFileChooser.APPROVE_OPTION){
+                    jTextField.setText(file.getAbsolutePath());
+                    path[0] = file.getAbsolutePath();
+                }
+            }
+        });
+
+        /**
+         * 后缀名下拉框监听：获取项目的源文件的后缀名
+         */
+        jComboBox1.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.SELECTED){
+                    ext[0] = jComboBox1.getSelectedItem().toString();
+                }
+            }
+        });
+
+        ProjectFactory project = ProjectFactory.getInstance();
+        BuilderFactory builder = BuilderFactory.getInstance();
+
+        /**
+         * 按钮2的监听：
+         */
+        jb2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(path[0]+"===="+ext[0]);
+                Project p = project.getProject(
+                        path[0],ext[0]
+                );
+                Builder b = builder.getProjectBuilder(
+                        ext[0]
+                );
+
+//                String[] values2;
+//                if(p.getMain().size() >1){
+//                    values2 = ListUtil.list2Array(p.getMain());
+//                    jComboBox2.addItem(values2);
+//                }else if (p.getMain().size() == 1){
+//                    values2 = new String[]{"--不用选择--"};
+//                    jComboBox2.addItem(values2);
+//                }
+
+                b.run(p);
+            }
+        });
+
+        /**
+         * 按钮3的监听
+         */
+        jb3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Project p = project.getProject(
+                        path[0],ext[0]
+                );
+                Builder b = builder.getProjectBuilder(ext[0]);
+                TextFile input = new TextFile(path[0]+ File.separator+"input.txt");
+
+                TextFile outptut = b.run(p,input);
+                if(p.getErrorTxt() != null){
+                    textArea.setText(String.valueOf(p.getErrorTxt()));
+                }
+                else if(p.getErrTxt() != null){
+                    textArea.setText(String.valueOf(p.getErrTxt()));
+                }
+                else{
+                    textArea.setText(String.valueOf(FileUtil.getContents(outptut.getFile())));
+                }
+
+            }
+        });
+
+        /**
+         * 下拉框2的监听，判断用户选择哪个主函数
+         */
+        jComboBox2.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.ITEM_STATE_CHANGED){
+                    ByteArrayInputStream in = new ByteArrayInputStream(
+                            "test".getBytes()
+                    );
+                    System.setIn(in);
+                    InputStream rm = System.in;
+                    System.setIn(rm);
+                }
+            }
+        });
     }
 }

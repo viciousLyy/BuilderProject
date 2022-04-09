@@ -19,9 +19,9 @@ public class InterpreteBuilder extends Builder{
      * @param project 所要运行的项目
      */
     @Override
-    public void run(Project project) {
+    public void run(Project project,String ... args) {
         try{
-            interpreter.executeWithWindow(project,"");
+            interpreter.executeWithWindow(project,args);
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -34,9 +34,10 @@ public class InterpreteBuilder extends Builder{
      * @return  返回存放结果的文件
      */
     @Override
-    public TextFile run(Project project, TextFile srcFile) {
+    public TextFile run(Project project, TextFile srcFile,String ... args) {
         try {
-            interpreter.executeWithoutWindow(project,srcFile);
+            TextFile result = interpreter.executeWithoutWindow(project,srcFile,args);
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
         }

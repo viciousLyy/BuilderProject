@@ -15,11 +15,11 @@ public class CppCompiler extends Compiler {
         exts.add("cpp");
         this.setSrcFileExt(exts);
         this.setTargetFileExt("exe");
-        this.setCompilerName("GCC编译器");
+        this.setCompilerName("CPP编译器");
         List<String> cmd=new ArrayList<>();
         cmd.add("g++");
         cmd.add("-I");
-        cmd.add("../include");
+        cmd.add(CompileCommand.libPath);
         cmd.add(CompileCommand.sourceFiles);
         cmd.add("-o");
         cmd.add(CompileCommand.targetFile);
