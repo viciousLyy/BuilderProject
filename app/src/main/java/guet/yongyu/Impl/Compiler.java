@@ -119,7 +119,6 @@ public abstract class Compiler {
          */
         List<String> cmd = resetCmdLine();
         populatePlaceHolder(cmd,project);
-
         /**
          * 使用processBuilder执行cmd命令
          * processBuilder用于创建操作系统进程，提供了一种启动和管理进程的方法

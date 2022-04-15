@@ -1,0 +1,23 @@
+E:\BuilderProject\testProject\Java\Error\src\clsaa\Person.java:3: 错误: 程序包Interface不存在
+import Interface.Behavior;
+                ^
+E:\BuilderProject\testProject\Java\Error\src\clsaa\Person.java:5: 错误: 找不到符号
+public abstract class Person implements Behavior {
+                                        ^
+  符号: 类 Behavior
+E:\BuilderProject\testProject\Java\Error\src\clsaa\Person.java:6: 错误: 方法不会覆盖或实现超类型的方法
+    @Override
+    ^
+E:\BuilderProject\testProject\Java\Error\src\clsaa\Person.java:11: 错误: 方法不会覆盖或实现超类型的方法
+    @Override
+    ^
+E:\BuilderProject\testProject\Java\Error\src\clsaa\Person.java:16: 错误: 方法不会覆盖或实现超类型的方法
+    @Override
+    ^
+E:\BuilderProject\testProject\Java\Error\src\clsaa\Person.java:21: 错误: 方法不会覆盖或实现超类型的方法
+    @Override
+    ^
+E:\BuilderProject\testProject\Java\Error\src\clsaa\Person.java:26: 错误: 方法不会覆盖或实现超类型的方法
+    @Override
+    ^
+7 个错误

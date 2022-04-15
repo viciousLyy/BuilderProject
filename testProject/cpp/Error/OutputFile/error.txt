@@ -1,0 +1,10 @@
+E:\BuilderProject\testProject\cpp\Error\error.cpp: In function 'int main()':
+E:\BuilderProject\testProject\cpp\Error\error.cpp:6:54: error: expected ';' before 'cin'
+  cout<<"this is the test file of error CppProject\n!"
+                                                      ^
+                                                      ;
+  cin>>a;
+  ~~~                                                  
+E:\BuilderProject\testProject\cpp\Error\error.cpp:8:6: error: invalid conversion from 'const char*' to 'int' [-fpermissive]
+  a = "string";
+      ^~~~~~~~

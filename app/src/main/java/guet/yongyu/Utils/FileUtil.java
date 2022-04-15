@@ -19,7 +19,7 @@ public class FileUtil {
     public static void findFiles(List<File> result, File targetPath, List<String> singletonList) {
         if(targetPath.isDirectory()){
             File[] fs = targetPath.listFiles();
-            for(int i=0;i<fs.length;i++){
+            for(int i=0;(fs!=null)&&(i<fs.length);i++){
                 findFiles(result,new File(fs[i].getPath()),singletonList);
             }
         }else if(targetPath.getName().endsWith("."+singletonList.get(0))){
@@ -46,7 +46,7 @@ public class FileUtil {
     /**
      * 读取文件中的所有内容
      * @param file 目标文件
-     * @return 以列表的形式保存的文件内容
+     * @return 以集合的形式保存的文件内容
      */
     public static List<String> getContents(File file){
         String charSet = getCharSet(file);
@@ -70,32 +70,6 @@ public class FileUtil {
             return null;
         } catch (IOException e) {
             return null;
-        }
-    }
-
-    /**
-     * 读取文件的编码方式
-     * @param file 目标文件
-     * @return 编码
-     */
-    public static String getChar(File file){
-        byte[] head = new byte[3];
-        try(
-                FileInputStream stream = new FileInputStream(file);
-        ) {
-            stream.read(head);
-            String code = "gb2312";
-            if (head[0] == -1 && head[1] == -2 )
-                code = "UTF-16";
-            else if (head[0] == -2 && head[1] == -1 )
-                code = "Unicode";
-            else if(head[0]==-17 && head[1]==-69 && head[2] ==-65)
-                code = "UTF-8";
-            return code;
-        } catch (FileNotFoundException e) {
-            return "gb2312";
-        } catch (IOException e) {
-            return "gb2312";
         }
     }
 
@@ -143,13 +117,18 @@ public class FileUtil {
     }
 
     /**
-     * 返回文件名字，鸡肋
-     * @param name
-     * @return
+     * 将cmd命令转换成bat文件，并且在bat中添加pause命令使得控制台窗口得以停留
+     * @param cmd 将要转换的命令行命令
+     * @param batOfPath 将要写入cmd命令的bat文件路径
+     * @param name 生成的bat文件的名字
      */
-    public static String getStringName(){
-
-        return null;
+    public static String cmd2BatFile(List<String> cmd,String batOfPath,String name){
+        String batFile = batOfPath+File.separator+name+".bat";
+        String [] tempString = cmd.toArray(new String[cmd.size()]);
+        StringBuffer sb = new StringBuffer();
+        for(String str:tempString)
+            sb.append(str+" ");
+        write2File(batFile,sb+"\n"+"pause"+"\n"+"exit");
+        return batFile;
     }
-
 }

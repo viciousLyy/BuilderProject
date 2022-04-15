@@ -35,13 +35,12 @@ import java.util.ArrayList;
 
 public class App extends JFrame{
     public static void main(String[] args) {
-//        Builder builder = BuilderFactory.getInstance().getProjectBuilder("java");
+//        Builder builder = BuilderFactory.getInstance().getProjectBuilder("py");
 //        Project project = ProjectFactory.getInstance().getProject(
-//                "E:\\codeblockProject\\TwoMain",
-//                "java");
-//
-////        builder.run(project);
-//        TextFile input = new TextFile("E:\\codeblockProject\\TwoMain\\input.txt");
+//                "E:\\BuilderProject\\testProject\\python\\Tank",
+//                "py");
+//        TextFile input = new TextFile("input.txt");
+//        project.setMainIndex(12);
 //        builder.run(project);
         App app = new App();
     }
@@ -66,7 +65,7 @@ public class App extends JFrame{
         JTextField jTextField = new JTextField();
         jTextField.setFont(new Font("Dialog",1,15));
 
-        String[] values1 = new String[]{"--请选择--","c","java","python","cpp"};
+        String[] values1 = new String[]{"--请选择--","c","java","py","cpp"};
 
         JComboBox jComboBox1 = new JComboBox(values1);
         JComboBox jComboBox2 = new JComboBox(new String[]{"---","dd","sdfsad"});
@@ -80,6 +79,7 @@ public class App extends JFrame{
         JLabel jLabel = new JLabel("      ");
         JLabel jLabel2 = new JLabel("      ");
         JLabel jLabel3 = new JLabel("结果");
+        JLabel jLabel4 = new JLabel("                                 ");
         jLabel3.setFont(new Font("Dialog",1,40));
 
         GridBagLayout layout = new GridBagLayout();
@@ -93,7 +93,8 @@ public class App extends JFrame{
         this.add(jb2);
         this.add(jb3);
         this.add(jLabel2);
-        this.add(jComboBox2);
+//        this.add(jComboBox2);
+        this.add(jLabel4);
         this.add(jLabel3);
         this.add(textArea);
 
@@ -180,7 +181,7 @@ public class App extends JFrame{
         s.gridwidth = 0;
         s.weighty = 0;
         s.weightx = 0.2;
-        layout.setConstraints(jComboBox2,s);
+        layout.setConstraints(jLabel4,s);
 
         /**
          * 显示文本区域布局
@@ -202,6 +203,12 @@ public class App extends JFrame{
          * 项目的后缀名
          */
         final String[] ext = new String[1];
+
+        /**
+         * 创建工厂实例
+         */
+        ProjectFactory project = ProjectFactory.getInstance();
+        BuilderFactory builder = BuilderFactory.getInstance();
 
 
 
@@ -239,12 +246,10 @@ public class App extends JFrame{
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange() == ItemEvent.SELECTED){
                     ext[0] = jComboBox1.getSelectedItem().toString();
+
                 }
             }
         });
-
-        ProjectFactory project = ProjectFactory.getInstance();
-        BuilderFactory builder = BuilderFactory.getInstance();
 
         /**
          * 按钮2的监听：
@@ -259,18 +264,27 @@ public class App extends JFrame{
                 Builder b = builder.getProjectBuilder(
                         ext[0]
                 );
-
-//                String[] values2;
-//                if(p.getMain().size() >1){
-//                    values2 = ListUtil.list2Array(p.getMain());
-//                    jComboBox2.addItem(values2);
-//                }else if (p.getMain().size() == 1){
-//                    values2 = new String[]{"--不用选择--"};
-//                    jComboBox2.addItem(values2);
-//                }
-
+                if(p.getMainFunctions().size() > 1) {
+                    String s = (String) JOptionPane.showInputDialog(
+                            null,
+                            "请选择所要运行的主函数:\n",
+                            "主函数", JOptionPane.PLAIN_MESSAGE,
+                            new ImageIcon("icon.png"),
+                            p.getMainFunctions().toArray(),
+                            p.getMainFunctions().get(0));
+                    p.setMainIndex(p.getMainFunctions().indexOf(s));
+                }
                 b.run(p);
+
+                if(p.getErrorTxt() != null){
+                    textArea.setText(String.valueOf(p.getErrorTxt()));
+                }
+                else if(p.getErrTxt() != null){
+                    textArea.setText(String.valueOf(p.getErrTxt()));
+                }
             }
+
+
         });
 
         /**
@@ -285,7 +299,18 @@ public class App extends JFrame{
                 Builder b = builder.getProjectBuilder(ext[0]);
                 TextFile input = new TextFile(path[0]+ File.separator+"input.txt");
 
-                TextFile outptut = b.run(p,input);
+                if(p.getMainFunctions().size() > 1) {
+                    String s = (String) JOptionPane.showInputDialog(
+                            null,
+                            "请选择所要运行的主函数:\n",
+                            "主函数", JOptionPane.PLAIN_MESSAGE,
+                            new ImageIcon("icon.png"),
+                            p.getMainFunctions().toArray(),
+                            p.getMainFunctions().get(0));
+                    p.setMainIndex(p.getMainFunctions().indexOf(s));
+                }
+
+                TextFile output = b.run(p,input);
                 if(p.getErrorTxt() != null){
                     textArea.setText(String.valueOf(p.getErrorTxt()));
                 }
@@ -293,7 +318,7 @@ public class App extends JFrame{
                     textArea.setText(String.valueOf(p.getErrTxt()));
                 }
                 else{
-                    textArea.setText(String.valueOf(FileUtil.getContents(outptut.getFile())));
+                    textArea.setText(String.valueOf(FileUtil.getContents(output.getFile())));
                 }
 
             }
@@ -302,18 +327,18 @@ public class App extends JFrame{
         /**
          * 下拉框2的监听，判断用户选择哪个主函数
          */
-        jComboBox2.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() == ItemEvent.ITEM_STATE_CHANGED){
-                    ByteArrayInputStream in = new ByteArrayInputStream(
-                            "test".getBytes()
-                    );
-                    System.setIn(in);
-                    InputStream rm = System.in;
-                    System.setIn(rm);
-                }
-            }
-        });
+//        jComboBox2.addItemListener(new ItemListener() {
+//            @Override
+//            public void itemStateChanged(ItemEvent e) {
+//                if(e.getStateChange() == ItemEvent.ITEM_STATE_CHANGED){
+//                    ByteArrayInputStream in = new ByteArrayInputStream(
+//                            "test".getBytes()
+//                    );
+//                    System.setIn(in);
+//                    InputStream rm = System.in;
+//                    System.setIn(rm);
+//                }
+//            }
+//        });
     }
 }

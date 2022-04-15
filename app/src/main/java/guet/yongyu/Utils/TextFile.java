@@ -26,14 +26,14 @@ public class TextFile  {
      */
     public List<String> getContents(){
         File file = new File(path);
-        String charSet = getCharSet();
+        String charSet = FileUtil.getCharSet(file);
         try(
                 InputStream ins =new FileInputStream(file);
                 InputStreamReader isr = new InputStreamReader(ins,charSet);
                 BufferedReader br = new BufferedReader(isr);
 
         ) {
-            List<String> contents = new ArrayList<>();         //不能new一个对象出来，因为new出来后该变量就不会为空了
+            List<String> contents = new ArrayList<>();
             String s = br.readLine();
             if(s==null)
                 return null;
@@ -48,31 +48,4 @@ public class TextFile  {
             return null;
         }
     }
-
-    /*
-    读取文件的类型码
-     */
-    public String getCharSet(){
-        File file = new File(path);
-        byte[] head = new byte[3];
-        try(
-                FileInputStream stream = new FileInputStream(file);
-        ) {
-            stream.read(head);
-            String code = "gb2312";
-            if (head[0] == -1 && head[1] == -2 )
-                code = "UTF-16";
-            else if (head[0] == -2 && head[1] == -1 )
-                code = "Unicode";
-            else if(head[0]==-17 && head[1]==-69 && head[2] ==-65)
-                code = "UTF-8";
-            return code;
-        } catch (FileNotFoundException e) {
-            return "gb2312";
-        } catch (IOException e) {
-            return "gb2312";
-        }
-    }
-
-
 }

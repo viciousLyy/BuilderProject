@@ -21,7 +21,9 @@ public class InterpreteBuilder extends Builder{
     @Override
     public void run(Project project,String ... args) {
         try{
-            interpreter.executeWithWindow(project,args);
+            List<String> syntaxErr = interpreter.checkSyntaxErr(project);
+            if(syntaxErr == null)
+                interpreter.executeWithWindow(project,args);
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -36,8 +38,13 @@ public class InterpreteBuilder extends Builder{
     @Override
     public TextFile run(Project project, TextFile srcFile,String ... args) {
         try {
-            TextFile result = interpreter.executeWithoutWindow(project,srcFile,args);
-            return result;
+            List<String> syntaxErr = interpreter.checkSyntaxErr(project);
+            if(syntaxErr == null){
+                TextFile result = interpreter.executeWithoutWindow(project,srcFile,args);
+                return result;
+            }else{
+                return null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

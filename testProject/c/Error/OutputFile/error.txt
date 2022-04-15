@@ -1,0 +1,5 @@
+E:\BuilderProject\testProject\c\Error\error.c: In function 'main':
+E:\BuilderProject\testProject\c\Error\error.c:8:2: error: 'cin' undeclared (first use in this function)
+  cin>>a>>ch>>b;
+  ^~~
+E:\BuilderProject\testProject\c\Error\error.c:8:2: note: each undeclared identifier is reported only once for each function it appears in

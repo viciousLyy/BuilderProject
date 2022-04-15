@@ -46,4 +46,24 @@ public class PropUtil {
         }
         return value;
     }
+
+    /**
+     * 返回正则表达式配置文件中不同的后缀名对应的值
+     * @param key  后缀名
+     * @return  会追名对应的值
+     */
+    public static String getParameterOfMainFileRegx(String key){
+        String value = null;
+        Properties properties = new Properties();
+        FileInputStream in = null;
+        try{
+            //路径问题
+            in = new FileInputStream("app/src/main/resources/mainFileRegx.properties");
+            properties.load(in);
+            value = properties.getProperty(key);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
 }

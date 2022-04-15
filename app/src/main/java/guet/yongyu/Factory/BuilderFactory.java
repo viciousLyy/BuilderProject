@@ -6,6 +6,7 @@ import guet.yongyu.Builder.InterpreteBuilder;
 import guet.yongyu.Builder.MixedBuilder;
 import guet.yongyu.Impl.Interpreter;
 import guet.yongyu.Impl.Compiler;
+import guet.yongyu.MyException.CompilerException;
 import guet.yongyu.Utils.ListUtil;
 import guet.yongyu.Utils.PropUtil;
 
@@ -108,6 +109,11 @@ public class BuilderFactory {
 
             default:
                 System.out.println("找不到解析字符串后对应的构造器");
+                try {
+                    throw new CompilerException("找不到解析字符串后对应的构造器");
+                } catch (CompilerException e) {
+                    e.printStackTrace();
+                }
                 return null;
         }
         return builder;

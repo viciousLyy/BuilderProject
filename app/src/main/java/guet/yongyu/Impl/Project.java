@@ -8,8 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Project {
+    /**
+     * 项目在内存中所处的路径
+     */
     private static String path;
+
+    /**
+     * 项目的后缀名
+     */
     private static String srcExt;
+
+    /**
+     * 用于返回返回主入口函数的序号，初始化为0意味着默认只有一个主入口函数
+     */
+    public int MainIndex = 0;
 
     public static List<File> allFiles = new ArrayList<File>();
 
@@ -28,7 +40,7 @@ public abstract class Project {
         this.srcExt = srcExt;
     }
 
-    public static String getPath() {
+    public String getPath() {
         return path;
     }
 
@@ -36,9 +48,11 @@ public abstract class Project {
         Project.path = path;
     }
 
-    /*
-        获得所有的文件
-         */
+    /**
+     * 获得目录下所有得文件
+     * @param path 目录
+     * @return 文件集合
+     */
     public List<File> getMainFiles(String path){
         File[] files = new File(path).listFiles();
         for(File file:files){
@@ -50,13 +64,8 @@ public abstract class Project {
         return allFiles;
     }
 
-
-    public void setMainFileIndex(int index){
-
-    }
-
     /**
-     * 指定项目生成文件的路径
+     * 为项目创建一个存放输出的专门目录，名为OutputFile
      * @return 文件路径
      */
     public File getOutputDir(){
@@ -67,8 +76,8 @@ public abstract class Project {
     }
 
     /**
-     * 得到当前项目下所有后缀结尾的文件（比如c,cpp）
-     * @return  一个文件列表（以某一后缀结尾）
+     * 得到当前项目下所有以扩展名结尾的文件（比如c,cpp）
+     * @return  一个文件集合
      */
     public List<File> getSrcFiles(){
         List<File> result = new ArrayList<>();
@@ -77,9 +86,13 @@ public abstract class Project {
         File file = new File(getPath());
         FileUtil.findFiles(result,file,srcExtSingle);
         if(result.isEmpty()){
-            FileUtil.write2File(getOutputDir().getAbsolutePath()+File.separator
-            +"err.txt","无法读取到任何文件");
-            return null;
+            FileUtil.write2File(getOutputDir()+File.separator+"error.txt",
+                    "找不到任何源文件，该项目不是目标项目");
+            try {
+                throw new Exception("找不到任何源文件");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }
@@ -99,7 +112,7 @@ public abstract class Project {
     }
 
     /**
-     * 得到该项目的项目名字
+     * 获得到该项目的项目名字
      * @return 项目名字
      */
     public String getProjectName() {
@@ -159,38 +172,66 @@ public abstract class Project {
     }
 
     /**
-     * 得到生成的主函数入口，又可能有多个
-     * @return
+     * 获取项目中主入口的函数名，有可能有多个
+     * java中判断主入口函数的正则表达式为：".*public static void main\\(String\\[\\] args\\).*"
+     * python中判断主入口函数正则表达式为："^(?!(def)).*" && "^(?!\\s).*"
+     * @return 主入口函数名集合，如果没有，则返回null
      */
-    public List<String> getMain(){
-        List<File> result= getSrcFiles();
-        List<String> files = new ArrayList<>();
-        List<String> contents = null;
-        String mainPackage = "";
-        String regx = ".*public static void main\\(String\\[\\] args\\).*";
-        for(File file:result){
-            contents = FileUtil.getContents(file);
-            for(String str:contents){
-                if(str.matches("\\s*package\\s.*")){
-                    mainPackage = str.split("\\s|;")[1];
-                }
-                if(str.matches(regx))
-                {
-                    System.out.println(file.getName()+"package is "+mainPackage);
-                    if(mainPackage != "")
-                    {
-                        files.add(mainPackage+"."+file.getName().replaceFirst(".java",""));
-                        mainPackage  = "";
+    public List<String> getMainFunctions(){
+        /**
+         * 用于判断java主入口的正则表达式
+         */
+        String regxJava = ".*public static void main\\(String\\[\\] args\\).*";
+
+        /**
+         * 用于判断python主函数入口的正则表达式
+         */
+        String regxPython = "^(?!(def)).*" ;
+        String regxPython1= "^(?!\\s).*";
+
+        List<String> results = new ArrayList<>();
+        List<File> srcFiles = getSrcFiles();
+
+        /**
+         * 如果是java和python，需要进行判断是否有多个，如果是c或者c++则不需要进行判断，直接将
+         * results的大小设置为1就可以了，即添加一个 “” 元素。
+         */
+        if(getSrcExt().equals("java")){
+            for(File file:srcFiles){
+                List<String> contents = FileUtil.getContents(file);
+                if(contents == null)
+                    continue;
+                for(String content:contents){
+                    if(content.matches(regxJava)){
+                        results.add(file.getAbsolutePath());
+                        break;
                     }
-                    else{
-                        files.add(file.getName().replaceFirst(".java",""));
-                    }
-                    break;
                 }
             }
-            mainPackage  = "";
+        }else if(getSrcExt().equals("py")){
+            for(File file:srcFiles){
+                List<String> contents = FileUtil.getContents(file);
+                if(contents == null)
+                    continue;
+                for(String content:contents){
+                    if( content.matches(regxPython) && content.matches(regxPython1) ){
+                        results.add(file.getAbsolutePath());
+                        break;
+                    }
+                }
+            }
+        }else {
+            results.add("");
         }
-        return files;
+
+        return results;
     }
 
+    /**
+     * 如果项目中有多个主入口函数，则调用此函数可以选择使用哪一个主函数
+     * @param index
+     */
+    public void setMainIndex(int index){
+        this.MainIndex = index;
+    }
 }

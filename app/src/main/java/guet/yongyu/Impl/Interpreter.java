@@ -1,5 +1,6 @@
 package guet.yongyu.Impl;
 
+import guet.yongyu.Utils.FileUtil;
 import guet.yongyu.Utils.InterpreteCommand;
 import guet.yongyu.Utils.ListUtil;
 import guet.yongyu.Utils.TextFile;
@@ -35,6 +36,11 @@ public abstract class Interpreter {
      */
     private long timeout=5;
 
+    /**
+     * 设置工作目录,因为java语言需要在包的上一级运行，python需要在当前目录或者上级目录下运行
+     */
+    private String workDir ;
+
     public Interpreter() {
         processBuilder = new ProcessBuilder();
         interpreterName = "interpreter";
@@ -52,12 +58,35 @@ public abstract class Interpreter {
      * @throws Exception 项目异常
      */
     public void executeWithWindow(Project project, String... args) throws Exception {
-        File workDir = project.getOutputDir();
-        processBuilder.directory(workDir);
+        /**
+         * 将工作目录重定向到指定目录
+         */
+        String workPath = getWorkDir(project);
+        File work = new File(workPath);
+        processBuilder.directory(work);
+
+        /**
+         * 重置命令行回占位符模样
+         */
         List<String> cmd = resetCmdLine(cmdLineWithWindow);
+
+        /**
+         * 填充命令行
+         */
         populatePlaceholders(cmd,project);
         cmd.addAll(Arrays.asList(args));
-        System.out.println("============ ==common is"+cmd);
+        System.out.println(cmd);
+
+        /**
+         * 生成bat文件，并重置cmd命令
+         */
+        String batFile = FileUtil.cmd2BatFile(cmd, workPath, project.getProjectName());
+        cmd.clear();
+        cmd.add("cmd");
+        cmd.add("/k");
+        cmd.add("start");
+        cmd.add(batFile);
+        System.out.println(cmd);
         Process p;
         try {
             p = processBuilder.start();
@@ -85,7 +114,7 @@ public abstract class Interpreter {
      * @param project 项目对象
      * @throws Exception 项目异常
      */
-    protected  void populatePlaceholders(List<String> cmd, Project project) throws Exception
+    protected void populatePlaceholders(List<String> cmd, Project project) throws Exception
     {
         ListUtil.replaceFirst(cmd, InterpreteCommand.libPath,
                 project.getOutputDir().getAbsolutePath());
@@ -113,6 +142,11 @@ public abstract class Interpreter {
      * @return 语法错误
      */
     public List<String> checkSyntaxErr(Project project) throws Exception {
+        /**
+         * 重定向程序的输入输出
+         * ProcessBuilder.Redirect.PIPE :the initial value
+         */
+        processBuilder.directory(new File(getWorkDir(project)));
         processBuilder.redirectInput(ProcessBuilder.Redirect.PIPE);
         processBuilder.redirectOutput(ProcessBuilder.Redirect.PIPE);
         List<String> cmd = resetCmdLine(cmdLineWithoutWindow);
@@ -120,6 +154,7 @@ public abstract class Interpreter {
         String targetPath = project.getOutputDir().getAbsolutePath();
         TextFile errFile = new TextFile(targetPath + File.separator + "err.txt");
         processBuilder.redirectError(errFile.getFile());
+
         Process p;
         try {
             p = processBuilder.start();
@@ -200,20 +235,35 @@ public abstract class Interpreter {
      */
     public TextFile executeWithoutWindow(Project project, TextFile input, String... args) throws Exception {
         /**
-         * 设置工作目录，否则对于java文件来说，容易出错
+         * 设置项目的运行目录
          */
-        File workDir = project.getOutputDir();
+        File workDir = new File(getWorkDir(project));
         processBuilder.directory(workDir);
 
+        /**
+         * 设置程序需要的输入源，一般是文本文件
+         */
         processBuilder.redirectInput(input.getFile());
+
+        /**
+         * 设置程序的输出源，这里是一个output.txt文件
+         */
         File targetPath = project.getOutputDir();
         TextFile output = new TextFile(targetPath.getPath() + File.separator + "output.txt");
         processBuilder.redirectOutput(output.getFile());
+
+        /**
+         * 设置错误输出流，这里是一个err.txt文件
+         */
         TextFile errFile = new TextFile(targetPath.getPath()+File.separator+"err.txt");
         processBuilder.redirectError(errFile.getFile());
+
         List<String>cmd= resetCmdLine(cmdLineWithoutWindow);
         populatePlaceholders(cmd,project);
         cmd.addAll(Arrays.asList(args));
+
+        System.out.println(cmd);
+
         Process p;
         try {
             p = processBuilder.start();
@@ -251,4 +301,11 @@ public abstract class Interpreter {
     public String getInterpreterName(){
         return this.interpreterName;
     }
+
+    /**
+     * 得到工作目录，由于运行不同的程序它们所需要的工作目录是不一样的，所以需要用户设置
+     * @return 工作目录
+     */
+    protected abstract String getWorkDir(Project project);
+
 }

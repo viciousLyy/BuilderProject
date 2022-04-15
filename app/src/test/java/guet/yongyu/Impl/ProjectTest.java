@@ -29,10 +29,12 @@ class ProjectTest {
 
     @Test
     void getSrcFiles(){
-        Project project = new CProject("E:\\codeblockProject\\BuilderTest","c");
+        Project project = new PythonProject("E:\\BuilderProject\\app\\src\\main\\resources\\testProject\\PythonTest"
+                ,"py");
         List<File> allfiles = project.getSrcFiles();
-        for(File f:allfiles)
-            System.out.println(f.getName());
+        assertEquals(
+                "E:\\BuilderProject\\app\\src\\main\\resources\\testProject\\PythonTest\\Tank10.py",
+                allfiles.get(9).getAbsolutePath());
     }
 
     @Test
@@ -70,6 +72,17 @@ class ProjectTest {
         Project p = new JavaProject("E:\\BuilderProject\\app\\src\\main\\resources\\testProject\\CharSetgetJava",
                 "java");
         System.out.println(p.getErrTxt());
+    }
+
+    @Test
+    void getMainFunctions(){
+        Project project = new PythonProject(
+                "E:\\BuilderProject\\testProject\\python\\errorPython",
+                "py"
+        );
+        List<String> results = new ArrayList<>();
+        results.add("E:\\BuilderProject\\testProject\\python\\errorPython\\error.py");
+        assertEquals(results.get(0),project.getMainFunctions().get(0));
     }
 }
 

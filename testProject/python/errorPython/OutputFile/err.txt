@@ -1,0 +1,4 @@
+  File "E:\BuilderProject\testProject\python\errorPython\error.py", line 125
+    aegagasdga¶ö°¡·ç¸ñ°¡£»
+                   ^
+SyntaxError: invalid character '£»' (U+FF1B)
